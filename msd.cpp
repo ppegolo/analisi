@@ -22,14 +22,14 @@
 #include "mp.h"
 #endif
 template <class T>
-MSD<T>::MSD(T *t, unsigned int skip, unsigned int tmax, unsigned int nthreads, bool calcola_msd_centro_di_massa, bool calcola_msd_nel_sistema_del_centro_di_massa, bool calcola_msd_correlazione, bool debug) :
-    traiettoria(t), lmax(tmax),skip(skip),nthread(nthreads), cm_msd(calcola_msd_centro_di_massa),debug(debug),cm_self(calcola_msd_nel_sistema_del_centro_di_massa), correl_msd(calcola_msd_correlazione), ntypes{0}
+MSD<T>::MSD(T *t, unsigned int skip, unsigned int tmax, unsigned int nthreads, bool calcola_msd_centro_di_massa, bool calcola_msd_nel_sistema_del_centro_di_massa, bool calcola_msd_cross, bool debug) :
+    traiettoria(t), lmax(tmax),skip(skip),nthread(nthreads), cm_msd(calcola_msd_centro_di_massa),debug(debug),cm_self(calcola_msd_nel_sistema_del_centro_di_massa), cross_msd(calcola_msd_cross), ntypes{0}
 {
-    if (calcola_msd_centro_di_massa)
+    if (calcola_msd_centro_di_massa && calcola_msd_cross)
+        f_cm=3;
+    else if (calcola_msd_centro_di_massa && !calcola_msd_cross)
         f_cm=2;
-    else
-        f_cm=1;
-    if (calcola_msd_correlazione)
+	else if (!calcola_msd_cross && calcola_msd_cross)
         f_corr=2;
     else
         f_corr=1;
@@ -142,7 +142,7 @@ void MSD<T>::calcola(unsigned int primo) {
                                 lista[ntypes*t*f_cm*f_corr+ntypes+itype]+=delta/(++cont[ntypes+itype]);
                            }
                         }
-						if (correl_msd) {
+						if (cross_msd) {
                             for (unsigned int iatom=0;iatom<traiettoria->get_natoms();iatom++) {
                             	for (unsigned int jatom=0;jatom<traiettoria->get_natoms();jatom++) {
 									double dx2ij = (traiettoria->posizioni(primo+imedia,iatom)[0]-traiettoria->posizioni(primo+imedia+t,iatom)[0])*(traiettoria->posizioni(primo+imedia,jatom)[0]-traiettoria->posizioni(primo+imedia+t,jatom)[0]);
