@@ -41,7 +41,7 @@ private:
     using OperazioniSuLista<MSD<T> >::lunghezza_lista;
     T * traiettoria;
     unsigned int ntimesteps,skip,lmax,leff,nthread,f_size,ntypes;
-    bool cm_msd,cm_self,debug;
+    bool cm_msd,cm_self,cm_cross,debug;
 };
 
 #endif // MSD_H
