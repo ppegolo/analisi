@@ -118,38 +118,72 @@ void MSD<T>::calcola(unsigned int primo) {
                                             traiettoria->posizioni(primo+imedia,iatom)[2]-traiettoria->posizioni(primo+imedia+t,iatom)[2]
                                             -(traiettoria->posizioni_cm(primo+imedia,itype)[2]-traiettoria->posizioni_cm(primo+imedia+t,itype)[2])
                                         ,2))
-                                        -lista[ntypes*t*f_size+traiettoria->get_type(iatom)];
-                                lista[ntypes*t*f_size+traiettoria->get_type(iatom)]+=delta/(++cont[traiettoria->get_type(iatom)]);
+                                        -lista[ntypes*t*f_size+itype];
+                                lista[ntypes*t*f_size+itype]+=delta/(++cont[itype]);
 
                             }
                         }else{
                             for (unsigned int iatom=0;iatom<traiettoria->get_natoms();iatom++) {
+                                unsigned int itype=traiettoria->get_type(iatom);
                                 double delta=(pow(traiettoria->posizioni(primo+imedia,iatom)[0]-traiettoria->posizioni(primo+imedia+t,iatom)[0],2)+
                                         pow(traiettoria->posizioni(primo+imedia,iatom)[1]-traiettoria->posizioni(primo+imedia+t,iatom)[1],2)+
                                         pow(traiettoria->posizioni(primo+imedia,iatom)[2]-traiettoria->posizioni(primo+imedia+t,iatom)[2],2))
-                                        -lista[ntypes*t*f_size+traiettoria->get_type(iatom)];
-                                lista[ntypes*t*f_size+traiettoria->get_type(iatom)]+=delta/(++cont[traiettoria->get_type(iatom)]);
+                                        -lista[ntypes*t*f_size+itype];
+                                lista[ntypes*t*f_size+itype]+=delta/(++cont[itype]);
 
                             }
                         }
-                        if (cm_msd) {
+						if (cm_msd && cross_msd) {
+							// cm_msd
+                            for (unsigned int itype=0; itype < ntypes; itype++) {
+                            double delta=(pow(traiettoria->posizioni_cm(primo+imedia,itype)[0]-traiettoria->posizioni_cm(primo+imedia+t,itype)[0],2)+
+                                    pow(traiettoria->posizioni_cm(primo+imedia,itype)[1]-traiettoria->posizioni_cm(primo+imedia+t,itype)[1],2)+
+                                    pow(traiettoria->posizioni_cm(primo+imedia,itype)[2]-traiettoria->posizioni_cm(primo+imedia+t,itype)[2],2))
+                                    -lista[ntypes*t*f_size+ntypes+itype];
+                                lista[ntypes*t*f_size + ntypes + itype]+=delta/(++cont[ntypes+itype]);
+							// cross_msd
+                            for (unsigned int iatom=0; iatom < traiettoria->get_natoms(); iatom++) {
+                                unsigned int itype = traiettoria->get_type(iatom);
+                            	for (unsigned int jatom=0; jatom < traiettoria->get_natoms(); jatom++) {
+                                	unsigned int jtype = traiettoria->get_type(jatom);
+									if (itype == jtype) {
+										double dxi = traiettoria->posizioni(primo + imedia, iatom)[0] - traiettoria->posizioni(primo + imedia + t, iatom)[0]
+										double dxj = traiettoria->posizioni(primo + imedia, jatom)[0] - traiettoria->posizioni(primo + imedia + t, jatom)[0]
+										double dyi = traiettoria->posizioni(primo + imedia, iatom)[1] - traiettoria->posizioni(primo + imedia + t, iatom)[1]
+										double dyj = traiettoria->posizioni(primo + imedia, jatom)[1] - traiettoria->posizioni(primo + imedia + t, jatom)[1]
+										double dzi = traiettoria->posizioni(primo + imedia, iatom)[2] - traiettoria->posizioni(primo + imedia + t, iatom)[2]
+										double dzj = traiettoria->posizioni(primo + imedia, jatom)[2] - traiettoria->posizioni(primo + imedia + t, jatom)[2]
+										double delta = (dxi*dxj + dyi*dyj + dzi*dzj) - lista[ntypes*t*f_size + itype];
+                                		lista[ntypes*t*f_size + 2*ntypes + itype] += delta/(++cont[2*ntypes + itype]);
+									}
+								}
+							}
+						}else if (cm_msd && !cross_msd) {
+							// only cm_msd
                             for (unsigned int itype=0; itype < ntypes; itype++) {
                             double delta=(pow(traiettoria->posizioni_cm(primo+imedia,itype)[0]-traiettoria->posizioni_cm(primo+imedia+t,itype)[0],2)+
                                     pow(traiettoria->posizioni_cm(primo+imedia,itype)[1]-traiettoria->posizioni_cm(primo+imedia+t,itype)[1],2)+
                                     pow(traiettoria->posizioni_cm(primo+imedia,itype)[2]-traiettoria->posizioni_cm(primo+imedia+t,itype)[2],2))
                                     -lista[ntypes*t*f_size+ntypes+itype];
 
-                                lista[ntypes*t*f_size+ntypes+itype]+=delta/(++cont[ntypes+itype]);
+                                lista[ntypes*t*f_size + ntypes + itype]+=delta/(++cont[ntypes+itype]);
                            }
-                        }
-						if (cross_msd) {
+                        }else if (!cm_msd && cross_msd) {
+							// only cross msd
                             for (unsigned int iatom=0;iatom<traiettoria->get_natoms();iatom++) {
+                                unsigned int itype=traiettoria->get_type(iatom);
                             	for (unsigned int jatom=0;jatom<traiettoria->get_natoms();jatom++) {
-									double dx2ij = (traiettoria->posizioni(primo+imedia,iatom)[0]-traiettoria->posizioni(primo+imedia+t,iatom)[0])*(traiettoria->posizioni(primo+imedia,jatom)[0]-traiettoria->posizioni(primo+imedia+t,jatom)[0]);
-									double dy2ij = (traiettoria->posizioni(primo+imedia,iatom)[1]-traiettoria->posizioni(primo+imedia+t,iatom)[1])*(traiettoria->posizioni(primo+imedia,jatom)[1]-traiettoria->posizioni(primo+imedia+t,jatom)[1]);
-									double dz2ij = (traiettoria->posizioni(primo+imedia,iatom)[2]-traiettoria->posizioni(primo+imedia+t,iatom)[2])*(traiettoria->posizioni(primo+imedia,jatom)[2]-traiettoria->posizioni(primo+imedia+t,jatom)[2]);
-									double delta = (dx2ij + dy2ij + dx2ij) - lista[ntypes*t*f_size+traiettoria->get_type(iatom)];
-                                	lista[ntypes*t*f_size+traiettoria->get_type(iatom)] += delta/(++cont[traiettoria->get_type(iatom)]);
+                                	unsigned int jtype=traiettoria->get_type(jatom);
+									if (itype == jtype) {
+										double dxi = traiettoria->posizioni(primo + imedia, iatom)[0] - traiettoria->posizioni(primo + imedia + t, iatom)[0]
+										double dxj = traiettoria->posizioni(primo + imedia, jatom)[0] - traiettoria->posizioni(primo + imedia + t, jatom)[0]
+										double dyi = traiettoria->posizioni(primo + imedia, iatom)[1] - traiettoria->posizioni(primo + imedia + t, iatom)[1]
+										double dyj = traiettoria->posizioni(primo + imedia, jatom)[1] - traiettoria->posizioni(primo + imedia + t, jatom)[1]
+										double dzi = traiettoria->posizioni(primo + imedia, iatom)[2] - traiettoria->posizioni(primo + imedia + t, iatom)[2]
+										double dzj = traiettoria->posizioni(primo + imedia, jatom)[2] - traiettoria->posizioni(primo + imedia + t, jatom)[2]
+										double delta = (dxi*dxj + dyi*dyj + dzi*dzj) - lista[ntypes*t*f_size + itype];
+                                		lista[ntypes*t*f_size + ntypes + itype] += delta/(++cont[ntypes + itype]);
+									}
 								}
 							}
 						}
