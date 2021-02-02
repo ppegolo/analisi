@@ -26,6 +26,7 @@ public:
         unsigned int nthreads=0,
         bool calcola_msd_centro_di_massa=false,
         bool calcola_msd_nel_sistema_del_centro_di_massa=false,
+        bool calcola_msd_cross=false,
         bool debug=false
             );
     std::vector<ssize_t> get_shape() const { return {static_cast<ssize_t> (leff),static_cast<ssize_t>(f_cm),static_cast<ssize_t>(ntypes)} ; }
