@@ -29,8 +29,8 @@ public:
         bool calcola_msd_cross=false,
         bool debug=false
             );
-    std::vector<ssize_t> get_shape() const { return {static_cast<ssize_t> (leff),static_cast<ssize_t>(f_cm),static_cast<ssize_t>(ntypes)} ; }
-    std::vector<ssize_t> get_stride() const { return { static_cast<ssize_t> (ntypes*f_cm*sizeof(double)),static_cast<ssize_t>(ntypes*sizeof (double)),static_cast<ssize_t>(sizeof(double))};}
+    std::vector<ssize_t> get_shape() const { return {static_cast<ssize_t> (leff),static_cast<ssize_t>(f_size),static_cast<ssize_t>(ntypes)} ; }
+    std::vector<ssize_t> get_stride() const { return { static_cast<ssize_t> (ntypes*f_size*sizeof(double)),static_cast<ssize_t>(ntypes*sizeof (double)),static_cast<ssize_t>(sizeof(double))};}
     void reset(const unsigned int numeroTimestepsPerBlocco);
     void calcola(unsigned int primo);
     MSD<T> & operator =(const MSD<T> & destra);
@@ -40,7 +40,7 @@ private:
     using OperazioniSuLista<MSD<T> >::lista;
     using OperazioniSuLista<MSD<T> >::lunghezza_lista;
     T * traiettoria;
-    unsigned int ntimesteps,skip,lmax,leff,nthread,f_cm,ntypes;
+    unsigned int ntimesteps,skip,lmax,leff,nthread,f_size,ntypes;
     bool cm_msd,cm_self,debug;
 };
 
