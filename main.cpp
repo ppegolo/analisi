@@ -492,16 +492,16 @@ int main(int argc, char ** argv)
 
             }else if (msd || msd_cm || msd_self || msd_cross){
                 std::cerr << "Mean square displacement calculation ";
-                unsigned int f_cm=1;
+                unsigned int f_size=1;
                 if (msd_cm && msd_cross) {
                      std::cerr << "of the center of mass, of the atoms, and the cross contribution is beginning...\n";
-                     f_cm=3;
+                     f_size=3;
 				} else if (msd_cm && !msd_cross) {
                      std::cerr << "of the center of mass and of the atoms is beginning...\n";
-                     f_cm=2;
+                     f_size=2;
 				} else if (!msd_cm && msd_cross) {
                      std::cerr << "(cross contribution) of the atoms is beginning...\n";
-                     f_cm=2;
+                     f_size=2;
                 }else{
                      std::cerr << " of the atoms is beginning...\n";
                      if (msd_self) {
@@ -515,10 +515,10 @@ int main(int argc, char ** argv)
                 using MSD=MSD<Traiettoria>;
                 MediaBlocchi<MSD,unsigned int,unsigned int,unsigned int,bool,bool,bool> Msd(&test,blocknumber);
                 Msd.calcola(skip,stop_acf,numero_thread,msd_cm,msd_self,msd_cross,dumpGK);
-                for (unsigned int i=0;i<Msd.media()->lunghezza()/test.get_ntypes()/f_cm;i++) {
-                    for (unsigned int j=0;j<test.get_ntypes()*f_cm;j++)
-                        std::cout << Msd.media()->elemento(i*test.get_ntypes()*f_cm+j) << " " <<
-                                     Msd.varianza()->elemento(i*test.get_ntypes()*f_cm+j) << " ";
+                for (unsigned int i=0;i<Msd.media()->lunghezza()/test.get_ntypes()/f_size;i++) {
+                    for (unsigned int j=0;j<test.get_ntypes()*f_size;j++)
+                        std::cout << Msd.media()->elemento(i*test.get_ntypes()*f_size+j) << " " <<
+                                     Msd.varianza()->elemento(i*test.get_ntypes()*f_size+j) << " ";
                     std::cout << "\n";
                 }
 
