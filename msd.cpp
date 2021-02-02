@@ -141,6 +141,7 @@ void MSD<T>::calcola(unsigned int primo) {
                                     pow(traiettoria->posizioni_cm(primo+imedia,itype)[2]-traiettoria->posizioni_cm(primo+imedia+t,itype)[2],2))
                                     -lista[ntypes*t*f_size+ntypes+itype];
                                 lista[ntypes*t*f_size + ntypes + itype]+=delta/(++cont[ntypes+itype]);
+							}
 							// cross_msd
                             for (unsigned int iatom=0; iatom < traiettoria->get_natoms(); iatom++) {
                                 unsigned int itype = traiettoria->get_type(iatom);
