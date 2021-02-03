@@ -29,7 +29,7 @@ MSD<T>::MSD(T *t, unsigned int skip, unsigned int tmax, unsigned int nthreads, b
         f_size=3;
     else if (calcola_msd_centro_di_massa && !calcola_msd_cross)
         f_size=2;
-	else if (!calcola_msd_cross && calcola_msd_cross)
+	else if (!calcola_msd_centro_di_massa && calcola_msd_cross)
         f_size=2;
     else
         f_size=1;
@@ -182,8 +182,8 @@ void MSD<T>::calcola(unsigned int primo) {
 										double dyj = traiettoria->posizioni(primo + imedia, jatom)[1] - traiettoria->posizioni(primo + imedia + t, jatom)[1];
 										double dzi = traiettoria->posizioni(primo + imedia, iatom)[2] - traiettoria->posizioni(primo + imedia + t, iatom)[2];
 										double dzj = traiettoria->posizioni(primo + imedia, jatom)[2] - traiettoria->posizioni(primo + imedia + t, jatom)[2];
-										double delta = 2*(dxi*dxj + dyi*dyj + dzi*dzj) - lista[ntypes*t*f_size + 2*ntypes + itype];
-                                		lista[ntypes*t*f_size + 2*ntypes + itype] += delta/(++cont[2*ntypes + itype]);
+										double delta = 2*(dxi*dxj + dyi*dyj + dzi*dzj) - lista[ntypes*t*f_size + ntypes + itype];
+                                		lista[ntypes*t*f_size + ntypes + itype] += delta/(++cont[ntypes + itype]);
 									}
 								}
 							}
