@@ -149,20 +149,22 @@ void MSD<T>::calcola(unsigned int primo) {
 							}
 							// cross_msd
                             for (unsigned int iatom=0; iatom < traiettoria->get_natoms(); iatom++) {
-                                int itype = traiettoria->get_type(iatom);
-                            	for (unsigned int jatom=iatom; jatom < traiettoria->get_natoms(); jatom++) {
-                                	int jtype = traiettoria->get_type(jatom);
+                                unsigned int itype = traiettoria->get_type(iatom);
+								double dxi = traiettoria->posizioni(primo + imedia, iatom)[0] - traiettoria->posizioni(primo + imedia + t, iatom)[0];
+								double dyi = traiettoria->posizioni(primo + imedia, iatom)[1] - traiettoria->posizioni(primo + imedia + t, iatom)[1];
+								double dzi = traiettoria->posizioni(primo + imedia, iatom)[2] - traiettoria->posizioni(primo + imedia + t, iatom)[2];
+								double delta = pow(dxi, 2) + pow(dyi, 2) + pow(dzi, 2);
+                            	for (unsigned int jatom=iatom+1; jatom < traiettoria->get_natoms(); jatom++) {
+                                	unsigned int jtype = traiettoria->get_type(jatom);
 									if (itype == jtype) {
-										double dxi = traiettoria->posizioni(primo + imedia, iatom)[0] - traiettoria->posizioni(primo + imedia + t, iatom)[0];
 										double dxj = traiettoria->posizioni(primo + imedia, jatom)[0] - traiettoria->posizioni(primo + imedia + t, jatom)[0];
-										double dyi = traiettoria->posizioni(primo + imedia, iatom)[1] - traiettoria->posizioni(primo + imedia + t, iatom)[1];
 										double dyj = traiettoria->posizioni(primo + imedia, jatom)[1] - traiettoria->posizioni(primo + imedia + t, jatom)[1];
-										double dzi = traiettoria->posizioni(primo + imedia, iatom)[2] - traiettoria->posizioni(primo + imedia + t, iatom)[2];
 										double dzj = traiettoria->posizioni(primo + imedia, jatom)[2] - traiettoria->posizioni(primo + imedia + t, jatom)[2];
-										double delta = 2*(dxi*dxj + dyi*dyj + dzi*dzj) - lista[ntypes*t*f_size + 2*ntypes + itype];
-                                		lista[ntypes*t*f_size + 2*ntypes + itype] += delta/(++cont[2*ntypes + itype]);
+										delta += 2*(dxi*dxj + dyi*dyj + dzi*dzj)/natoms_per_species[itype];
 									}
 								}
+								delta += -lista[ntypes*t*f_size + 2*ntypes + itype];
+                                lista[ntypes*t*f_size + 2*ntypes + itype] += delta/(++cont[2*ntypes + itype]);
 							}
 						}else if (cm_msd && !cross_msd) {
 							// only cm_msd
@@ -176,7 +178,6 @@ void MSD<T>::calcola(unsigned int primo) {
                            }
                         }else if (!cm_msd && cross_msd) {
 							// only cross msd
-							//std::cout << "tipi: " << natoms_per_species[0] << "\n"; // prova
                             for (unsigned int iatom=0; iatom < traiettoria->get_natoms(); iatom++) {
                                 unsigned int itype = traiettoria->get_type(iatom);
 								double dxi = traiettoria->posizioni(primo + imedia, iatom)[0] - traiettoria->posizioni(primo + imedia + t, iatom)[0];
